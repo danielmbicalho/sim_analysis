@@ -7,14 +7,14 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="package_name",
+    name="sim_analysis",
     version="0.0.1",
     author="Daniel Magalhães Bicalho",
     author_email="danielmbicalho@gmail.com",
     description="Data analysis from Brazil mortality",
     long_description=page_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/danielmbicalho/analise_mortalidade_brasil"
+    url="https://github.com/danielmbicalho/sim_analysis",
     packages=find_packages(),
     install_requires=requirements,
     python_requires='>=3.8',
