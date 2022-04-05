@@ -10,50 +10,37 @@ import csv
 # import pandas as pd
 # from contextlib import closing
 from sim_analysis.utils.download_tools import download
+from sim_analysis.utils.download_tools import compare_files_size
 
 
-# inserir um teste para verificar a existência do arquivo
-# os.path.isfile(path) 
-# inserir um teste para verificar a disponibilidade do arquivo
-# os.path.isdir(path)
+# Dados de 2020
+# https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SIM/sim_preliminar_2020.csv
+# Dados de 2021
+# https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SIM/DO21OPEN.csv
 
 # definir uma função que receba apenas um ano para baixar os arquivos
-def download_data_files(dst_dir, initial_year, final_year):
-    src_url = base_url = "https://diaad.s3.sa-east-1.amazonaws.com/sim/Mortalidade_Geral_"
+def download_data_files(dst_dir, initial_year=1979, final_year=2019):
+    src_url = "https://diaad.s3.sa-east-1.amazonaws.com/sim/Mortalidade_Geral_"
     date_range = range(initial_year, final_year + 1 )    
    
     for year in date_range:
 
         data_dir = dst_dir
         data_file= os.path.join(dst_dir, f'Mortalidade_Geral_{year}.csv')
+        url_file = f'{src_url}{year}.csv'
 
         if not os.path.isdir(data_dir):
             os.mkdir(dst_dir)
         # TODO: comparar os tamanhos do arquivo original com o de destino
-        else:
-            if os.path.isfile(data_file):
+        elif os.path.isfile(data_file):
                 print(f'The file exists from the year: {year}, download the next file')
+
+        # Tratar a condição de desigualdade de tamanho
+        # Ver a ordem das condicionais
+        elif compare_files_size(url, data_file):
+                print('The size of remote file and local file are differents, download the file?')
         
-            else:
+        else:
                 print(f'Getting the file from year {year}')
-                url_arquivo = f'{src_url}{year}.csv'
                 with open(data_file, 'wb') as f:
-                    download(url_arquivo, data_file)
-
-    
-
-def decode_city_data(data_source, city_data, column):
-     # decodificação do dataset conforme
-     # https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SIM/Estrutura_SIM.pdf
-     pass
-
-
-def main():
-
-    dst_data = "./data"
-    base_url = "https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SIM/Mortalidade_Geral_"
-
-    download_data_files(base_url, dst_data, 1979, 2018)
-
-if __name__ == "__main__":
-    main()
+                    download(url_file, data_file)
